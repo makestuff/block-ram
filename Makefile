@@ -16,29 +16,9 @@
 # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-source "$::env(PROJ_HOME)/tools/common.do"
+WORK := makestuff
+SUBDIRS := tb-unit
 
-proc do_test {gui} {
-    if {$gui} {
-        vsim_run $::env(TESTBENCH)
+include $(PROJ_HOME)/tools/common.mk
 
-        add wave      dispClk
-
-        add wave -div "Write Side"
-        add wave      uut/wrEnable_in
-        add wave -hex uut/wrByteMask_in
-        add wave -hex uut/wrAddr_in
-        add wave -hex uut/wrData_in
-
-        add wave -div "Read Side"
-        add wave -hex uut/rdAddr_in
-        add wave -hex uut/rdData_out
-
-        add wave -div "Internals"
-        add wave -hex uut/memArray
-
-        gui_run 216 130 0 10 0 32 70
-    } else {
-        cli_run
-    }
-}
+$(COMPILE): ram_sc_be.sv
