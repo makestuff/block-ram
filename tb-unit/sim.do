@@ -40,6 +40,5 @@ proc do_test {gui} {
     gui_run 216 130 0 10 0 32 70
   } else {
     cli_run
-    finish
   }
 }
