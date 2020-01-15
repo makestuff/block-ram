@@ -25,8 +25,7 @@ proc do_test {gui} {
     add wave      dispClk
 
     add wave -div "Write Side"
-    add wave      uut/wrEnable_in
-    add wave -hex uut/wrByteMask_in
+    add wave -hex uut/wrMask_in
     add wave -hex uut/wrAddr_in
     add wave -hex uut/wrData_in
 

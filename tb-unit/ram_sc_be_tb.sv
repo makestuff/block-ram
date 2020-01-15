@@ -27,40 +27,38 @@ module ram_sc_be_tb;
   `include "svunit-util.svh"
 
   localparam int ADDR_NBITS = 5;  // i.e 2^5 = 32 addressible rows
-  localparam int SPAN_NBITS = 8;  // if !=8 then wrByteMask_in is more of a "span-mask" rather than "byte-mask"
+  localparam int SPAN_NBITS = 8;
+  localparam int NUM_SPANS = 8;
   typedef logic[ADDR_NBITS-1 : 0] Addr;  // ADDR_NBITS x 1-bit
-  typedef logic[SPAN_NBITS-1 : 0] Byte;  // SPAN_NBITS x 1-bit
-  typedef logic[7:0] ByteMask;
-  typedef Byte[7:0] Row;     // 8 * Byte
+  typedef logic[SPAN_NBITS-1 : 0] Span;  // SPAN_NBITS x 1-bit
+  typedef logic[NUM_SPANS-1 : 0] Mask;
+  typedef Span[NUM_SPANS-1 : 0] Row;     // NUM_SPANS x Span
   localparam Row XXX = 'X;
 
-  logic wrEnable;
   Row wrData, rdData;
   Addr wrAddr, rdAddr;
-  ByteMask wrByteMask;
+  Mask wrMask;
 
-  ram_sc_be#(ADDR_NBITS, SPAN_NBITS) uut(
+  ram_sc_be#(ADDR_NBITS, SPAN_NBITS, NUM_SPANS) uut(
     sysClk,
-    wrEnable, wrByteMask, wrAddr, wrData,
-    rdAddr, rdData);
+    wrMask, wrAddr, wrData,  // write side
+    rdAddr, rdData);         // read side
 
-  task doWrite(Addr addr, ByteMask bm, Row data = XXX);
+  task doWrite(Addr addr, Mask mask, Row data = XXX);
     if (data === XXX) begin
       typedef logic[31:0] uint32;
-      localparam int NUM_DWS = SPAN_NBITS*8/32;
+      localparam int NUM_DWS = SPAN_NBITS*NUM_SPANS/32;
       uint32[NUM_DWS-1 : 0] randomData;
       for (int i = 0; i < NUM_DWS; i = i + 1) begin
         randomData[i] = $urandom();
       end
       data = randomData;
     end
-    wrEnable = 1;
-    wrByteMask = bm;
+    wrMask = mask;
     wrAddr = addr;
     wrData = data;
     @(posedge sysClk);
-    wrEnable = 0;
-    wrByteMask = 'X;
+    wrMask = '0;
     wrAddr = 'X;
     wrData = 'X;
   endtask
@@ -82,8 +80,7 @@ module ram_sc_be_tb;
   // RAM readback test; sadly this does no asserts yet; you have to verify it visually
   `SVUNIT_TESTS_BEGIN
     `SVTEST(readback)
-      wrEnable = 0;
-      wrByteMask = 'X;
+      wrMask = '0;
       wrAddr = 'X;
       wrData = 'X;
       rdAddr = 'X;
