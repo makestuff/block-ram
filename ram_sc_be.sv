@@ -21,26 +21,27 @@
 //
 module ram_sc_be#(
     parameter int ADDR_NBITS = 5,  // default 32 rows
-    parameter int SPAN_NBITS = 8,  // if !=8 then wrByteMask_in is more of a "span-mask" rather than "byte-mask"
-    parameter int NUM_SPANS = 8
+    parameter int SPAN_NBITS = 8,  // each span is one byte
+    parameter int NUM_SPANS = 8    // each row is eight bytes
   )(
-    input  logic                                  clk_in,
+    input  logic                                    clk_in,
 
-    input  logic[NUM_SPANS-1 : 0]                 wrMask_in,
-    input  logic[ADDR_NBITS-1 : 0]                wrAddr_in,
-    input  logic[SPAN_NBITS-1 : 0][NUM_SPANS-1:0] wrData_in,
+    input  logic[NUM_SPANS-1 : 0]                   wrMask_in,
+    input  logic[ADDR_NBITS-1 : 0]                  wrAddr_in,
+    input  logic[NUM_SPANS-1 : 0][SPAN_NBITS-1 : 0] wrData_in,
 
-    input  logic[ADDR_NBITS-1 : 0]                rdAddr_in,
-    output logic[SPAN_NBITS-1 : 0][NUM_SPANS-1:0] rdData_out
+    input  logic[ADDR_NBITS-1 : 0]                  rdAddr_in,
+    output logic[NUM_SPANS-1 : 0][SPAN_NBITS-1 : 0] rdData_out
   );
-  typedef logic[SPAN_NBITS-1 : 0] Data;  // SPAN_NBITS x 1-bit
-  typedef Data[NUM_SPANS-1 : 0] Row;     // NUM_SPANS x Data
-  Row memArray[0 : 2**ADDR_NBITS-1];
+  typedef logic[SPAN_NBITS-1 : 0] Span;  // one Span is SPAN_NBITS x 1-bit
+  typedef Span[NUM_SPANS-1 : 0] Row;     // one Row is NUM_SPANS x Span
+  Row[0 : 2**ADDR_NBITS-1] memArray = '0;
 
   always_ff @(posedge clk_in) begin: infer_regs
     if (^wrAddr_in !== 1'bX) begin
       for (int i = 0; i < NUM_SPANS; i = i + 1) begin
-        if (wrMask_in[i]) memArray[wrAddr_in][i] <= wrData_in[i];
+        if (wrMask_in[i])
+          memArray[wrAddr_in][i] <= wrData_in[i];
       end
     end
     if (^rdAddr_in !== 1'bX)
