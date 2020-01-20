@@ -39,7 +39,7 @@ module ram_sc_be_tb;
   Addr wrAddr, rdAddr;
   Mask wrMask;
 
-  ram_sc_be#(ADDR_NBITS, SPAN_NBITS, NUM_SPANS) uut(
+  makestuff_ram_sc_be#(ADDR_NBITS, SPAN_NBITS, NUM_SPANS) uut(
     sysClk,
     wrMask, wrAddr, wrData,  // write side
     rdAddr, rdData);         // read side

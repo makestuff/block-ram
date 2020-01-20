@@ -19,7 +19,7 @@
 // Single-clock block-RAM with eight byte-enables. It would be good if this number eight could be
 // parameterized, but Quartus 16.1 refuses to infer altsyncram blocks if so.
 //
-module ram_sc_be#(
+module makestuff_ram_sc_be#(
     parameter int ADDR_NBITS = 5,  // default 32 rows
     parameter int SPAN_NBITS = 8,  // each span is one byte
     parameter int NUM_SPANS = 8    // each row is eight bytes
