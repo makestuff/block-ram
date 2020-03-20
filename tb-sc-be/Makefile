@@ -16,9 +16,9 @@
 # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-WORK := makestuff
-SUBDIRS := tb-sc tb-sc-be
+TESTBENCH := ram_sc_be_tb
+LIBS := makestuff
 
 include $(PROJ_HOME)/hdl-tools/common.mk
 
-$(COMPILE): ram_sc_be.sv ram_sc.sv
+$(COMPILE): $(TESTBENCH:%=%.sv)

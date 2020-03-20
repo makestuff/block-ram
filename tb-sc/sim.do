@@ -16,9 +16,28 @@
 # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-TESTBENCH := ram_sc_be_tb
-LIBS := makestuff altera_mf_ver
+source "$::env(PROJ_HOME)/hdl-tools/common.do"
 
-include $(PROJ_HOME)/hdl-tools/common.mk
+proc do_test {gui} {
+  if {$gui} {
+    vsim_run $::env(TESTBENCH)
 
-$(COMPILE): $(TESTBENCH:%=%.sv)
+    add wave      dispClk
+
+    add wave -div "Write Side"
+    add wave      uut/wrEnable_in
+    add wave -hex uut/wrAddr_in
+    add wave -hex uut/wrData_in
+
+    add wave -div "Read Side"
+    add wave -hex uut/rdAddr_in
+    add wave -hex uut/rdData_out
+
+    add wave -div "Internals"
+    add wave -hex uut/memArray
+
+    gui_run 216 130 0 10 0 32 70
+  } else {
+    cli_run
+  }
+}
