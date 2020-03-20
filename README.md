@@ -1,7 +1,7 @@
 ## Various block-ram modules
 You can git submodule this repo to provide some common block-ram configurations.
 
-[`makestuff_ram_sc`](ram_sc.sv): Single-clock block-RAM with single write-strobe.
+[`makestuff_ram_sc`](ram_sc.sv): Single-clock block-RAM with single write-strobe.\
 [`makestuff_ram_sc_be`](ram_sc_be.sv): Single-clock block-RAM with write-mask.
 
 See [BuildInfra](https://github.com/makestuff/ws-tools/blob/master/README.md) for details of how to incorporate this into your project.
